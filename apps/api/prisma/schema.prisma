@@ -5,10 +5,86 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+model User {
+  id            Int                    @id @default(autoincrement())
+  fullName      String                 @map("full_name")
+  username      String?                @unique
+  email         String                 @unique
+  passwordHash  String                 @map("password_hash")
+  createdAt     DateTime               @default(now()) @map("created_at")
+  tokens        AuthToken[]
+  settings      PrayerSettings?
+  schedules     DailyPrayerSchedule[]
+  logs          PrayerLog[]
+
+  @@map("users")
+}
+
+model AuthToken {
+  id          Int       @id @default(autoincrement())
+  userId      Int       @map("user_id")
+  tokenHash   String    @unique @map("token_hash")
+  expiresAt   DateTime  @map("expires_at")
+  revokedAt   DateTime? @map("revoked_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("auth_tokens")
+}
+
+model PrayerSettings {
+  id                  Int      @id @default(autoincrement())
+  userId              Int      @unique @map("user_id")
+  globalBufferMinutes Int      @default(20) @map("global_buffer_minutes")
+  latitude            Decimal? @db.Decimal(9, 6)
+  longitude           Decimal? @db.Decimal(9, 6)
+  cityName            String?  @map("city_name")
+  timezone            String   @default("Asia/Jakarta")
+  autoDetectLocation  Boolean  @default(true) @map("auto_detect_location")
+  calculationMethod   String   @default("mwl") @map("calculation_method")
+  updatedAt           DateTime @default(now()) @updatedAt @map("updated_at")
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("prayer_settings")
+}
+
+model DailyPrayerSchedule {
+  id                 Int      @id @default(autoincrement())
+  userId             Int      @map("user_id")
+  date               DateTime @db.Date
+  prayerName         String   @map("prayer_name")
+  scheduledAdzanTime DateTime @map("scheduled_adzan_time")
+  calculationMethod  String   @map("calculation_method")
+  latitude           Decimal  @db.Decimal(9, 6)
+  longitude          Decimal  @db.Decimal(9, 6)
+  fetchedAt          DateTime @default(now()) @map("fetched_at")
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date, prayerName])
+  @@map("daily_prayer_schedules")
+}
+
+model PrayerLog {
+  id                    Int       @id @default(autoincrement())
+  userId                Int       @map("user_id")
+  prayerName            String    @map("prayer_name")
+  date                  DateTime  @db.Date
+  checkInTimestamp      DateTime? @map("check_in_timestamp")
+  status                String
+  bufferSnapshotMinutes Int       @map("buffer_snapshot_minutes")
+  adzanSnapshotTime     DateTime  @map("adzan_snapshot_time")
+  responseTimeMinutes   Int?      @map("response_time_minutes")
+  createdAt             DateTime  @default(now()) @map("created_at")
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, date, prayerName])
+  @@map("prayer_logs")
 }
