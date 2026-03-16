@@ -1,25 +1,25 @@
-# Template project monorepo
+# Tracking Sholat - Monorepo
 
-This is a template monorepo project that you can use as a starting point for your own projects. It includes a basic structure for a monorepo, with a few example packages and applications.
+Proyek ini adalah platform untuk melacak aktivitas sholat harian, dibangun dengan arsitektur monorepo yang modern dan type-safe.
 
 ## Tech Stack
-- **Backend**: Hono
-- **Frontend**: Tanstack Router + Query
+- **Backend**: Hono.js (Node server)
+- **Frontend**: React + TanStack Router & Query
 - **Database**: PostgreSQL
 - **ORM**: Prisma
-- **Containerization**: Docker
-- **linting**: biome
-- **Validation**: zod
-- **Tooling**: pnpm-workspaces
+- **Containerization**: Docker & Docker Compose
+- **Linting & Formatting**: Biome
+- **Validation**: Zod
+- **Tooling**: pnpm workspaces
 
 ## Getting Started
 1. Clone the repository:
     ```bash
-    git clone https://github.com/anasMuf/monorepo_starterkit.git
+    git clone https://github.com/anasMuf/tracking-sholat.git
     ```
 2. Navigate to the project directory:
     ```bash
-    cd monorepo_starterkit
+    cd tracking-sholat
     ```
 3. Install dependencies:
     ```bash
@@ -27,7 +27,7 @@ This is a template monorepo project that you can use as a starting point for you
     ```
 4. Set up the environment variables by creating a `.env` file in the root directory and adding the following content:
     ```env
-    DATABASE_URL="postgresql://postgres:password@localhost:5432/monorepo_starterkit?schema=public"
+    DATABASE_URL="postgresql://postgres:password@localhost:5432/tracking_sholat?schema=public"
     VITE_API_BASE_URL="http://localhost:8000"
     ```
 5. Start the development server:
