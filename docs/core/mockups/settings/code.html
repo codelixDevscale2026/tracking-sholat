@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Settings - Sholat Tracking App</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#10b77f",
+                        "background-light": "#f6f8f7",
+                        "background-dark": "#10221c",
+                    },
+                    fontFamily: {
+                        "display": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 antialiased">
+<div class="relative flex min-h-screen w-full flex-col max-w-md mx-auto shadow-xl bg-background-light dark:bg-background-dark overflow-x-hidden">
+<!-- Header -->
+<div class="flex items-center p-4 pb-2 justify-between sticky top-0 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md z-10">
+<div class="text-primary flex size-10 shrink-0 items-center justify-center rounded-full hover:bg-primary/10 transition-colors cursor-pointer">
+<span class="material-symbols-outlined">arrow_back</span>
+</div>
+<h2 class="text-slate-900 dark:text-slate-100 text-lg font-bold leading-tight tracking-tight flex-1 text-center pr-10">Settings</h2>
+</div>
+<div class="flex flex-col gap-6 px-4 pb-24 pt-4">
+<!-- Smart Buffer Section -->
+<section class="flex flex-col gap-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">timer</span>
+<h2 class="text-slate-900 dark:text-slate-100 text-xl font-bold leading-tight tracking-tight">Smart Buffer System</h2>
+</div>
+<div class="p-4 rounded-xl bg-white dark:bg-slate-800/50 border border-primary/10 shadow-sm">
+<p class="text-slate-600 dark:text-slate-400 text-sm font-normal leading-relaxed mb-6">
+                        Adjust the global buffer time to ensure you have enough time to prepare for each prayer. This adds extra time before the Adhan.
+                    </p>
+<div class="@container">
+<div class="relative flex w-full flex-col items-start justify-between gap-6 p-2">
+<div class="flex w-full shrink-[3] items-center justify-between">
+<label class="text-slate-900 dark:text-slate-100 text-base font-semibold leading-normal">Global Buffer</label>
+<span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-sm font-bold">15 mins</span>
+</div>
+<div class="flex h-6 w-full items-center gap-4">
+<span class="text-slate-400 text-xs font-medium">5m</span>
+<div class="relative flex h-2 flex-1 rounded-full bg-primary/20">
+<div class="h-full w-[25%] rounded-full bg-primary"></div>
+<div class="absolute left-[25%] top-1/2 -translate-y-1/2 -ml-3 size-6 rounded-full bg-white border-2 border-primary shadow-lg cursor-pointer"></div>
+</div>
+<span class="text-slate-400 text-xs font-medium">60m</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Location Settings Section -->
+<section class="flex flex-col gap-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">location_on</span>
+<h2 class="text-slate-900 dark:text-slate-100 text-xl font-bold leading-tight tracking-tight">Location Settings</h2>
+</div>
+<div class="p-4 rounded-xl bg-white dark:bg-slate-800/50 border border-primary/10 shadow-sm space-y-4">
+<div class="flex flex-col gap-2">
+<label class="text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">Current Coordinates</label>
+<div class="flex items-center gap-3 p-3 bg-background-light dark:bg-slate-900 rounded-lg border border-primary/5">
+<span class="material-symbols-outlined text-primary text-xl">gps_fixed</span>
+<div class="flex flex-col">
+<p class="text-slate-900 dark:text-slate-100 text-sm font-mono">40.7128° N, 74.0060° W</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs">New York, USA</p>
+</div>
+<button class="ml-auto text-primary text-sm font-bold">Refresh</button>
+</div>
+</div>
+<div class="relative h-40 w-full overflow-hidden rounded-lg bg-slate-200 dark:bg-slate-700">
+<img alt="Map View" class="w-full h-full object-cover opacity-80 mix-blend-multiply dark:mix-blend-normal" data-alt="Modern minimalist map interface showing current city" data-location="New York City" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCAlHv-kCTpTs8tXbJ799uRjyc0MSj6We9CzTjDWz__haPYi2NW2su-j5To6VFGkyL21J26Y4S3a0-WIwm-jNAmynxKscS1LB-rCk-T_xSEylgfyc4BnOII_nODic0fC70yMnPVTq53eZ-j_yiUSSvZWEMpD70LVChDWfpSETrziZajJ-VVJyp8meTFNEaPkVcXlHF7_bKinOSyGXc5EVOmHh2Lf3HRo98bXHcqxQAKYi1vMV_kwiy1HQ7dk43jBVcmt4pZ0v94Nd9L"/>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="size-8 bg-primary rounded-full border-4 border-white dark:border-slate-800 shadow-xl flex items-center justify-center">
+<div class="size-2 bg-white rounded-full"></div>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between py-2">
+<div class="flex flex-col">
+<p class="text-slate-900 dark:text-slate-100 text-sm font-semibold leading-normal">Auto-detect Location</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs">Update coordinates via GPS</p>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-200 peer-focus:outline-none dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</label>
+</div>
+</div>
+</section>
+<!-- Calculation Method Section -->
+<section class="flex flex-col gap-4">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary">settings_suggest</span>
+<h2 class="text-slate-900 dark:text-slate-100 text-xl font-bold leading-tight tracking-tight">Prayer Method</h2>
+</div>
+<div class="p-4 rounded-xl bg-white dark:bg-slate-800/50 border border-primary/10 shadow-sm">
+<div class="flex items-center justify-between cursor-pointer">
+<div class="flex flex-col">
+<p class="text-slate-900 dark:text-slate-100 text-sm font-semibold">Calculation Method</p>
+<p class="text-slate-500 dark:text-slate-400 text-xs">Muslim World League (MWL)</p>
+</div>
+<span class="material-symbols-outlined text-slate-400">chevron_right</span>
+</div>
+</div>
+</section>
+</div>
+<!-- Bottom Navigation Bar -->
+<div class="fixed bottom-0 left-0 right-0 max-w-md mx-auto flex gap-2 border-t border-primary/10 bg-white/80 dark:bg-background-dark/80 backdrop-blur-xl px-4 pb-6 pt-3 z-20">
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">home</span>
+<p class="text-[10px] font-bold uppercase tracking-wider">Home</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">history</span>
+<p class="text-[10px] font-bold uppercase tracking-wider">History</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-slate-400 hover:text-primary transition-colors" href="#">
+<span class="material-symbols-outlined text-[24px]">bar_chart</span>
+<p class="text-[10px] font-bold uppercase tracking-wider">Stats</p>
+</a>
+<a class="flex flex-1 flex-col items-center justify-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined text-[24px] fill-1">settings</span>
+<p class="text-[10px] font-bold uppercase tracking-wider">Settings</p>
+</a>
+</div>
+</div>
+</body></html>

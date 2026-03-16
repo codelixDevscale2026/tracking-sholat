@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Sholat Tracking Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#10b77f",
+              "background-light": "#f6f8f7",
+              "background-dark": "#10221c",
+            },
+            fontFamily: {
+              "display": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen flex flex-col">
+<!-- Header & Top Section -->
+<header class="p-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="bg-primary/20 p-2 rounded-lg text-primary">
+<span class="material-symbols-outlined">calendar_today</span>
+</div>
+<div>
+<h1 class="text-lg font-bold">Jadwal Sholat</h1>
+<p class="text-xs text-slate-500 dark:text-slate-400">Jakarta, Indonesia</p>
+</div>
+</div>
+<button class="bg-white dark:bg-slate-800 p-2 rounded-full shadow-sm">
+<span class="material-symbols-outlined text-slate-600 dark:text-slate-300">notifications</span>
+</button>
+</header>
+<!-- Countdown Section -->
+<section class="px-4 py-6 text-center">
+<p class="text-primary font-bold text-sm tracking-wider uppercase mb-4">Menuju Ashar</p>
+<div class="flex justify-center gap-3">
+<div class="flex flex-col items-center gap-2">
+<div class="w-16 h-16 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center border border-primary/20">
+<span class="text-2xl font-bold text-primary">01</span>
+</div>
+<span class="text-[10px] font-medium text-slate-500 uppercase">Hours</span>
+</div>
+<div class="text-2xl font-bold pt-4 text-primary">:</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-16 h-16 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center border border-primary/20">
+<span class="text-2xl font-bold text-primary">12</span>
+</div>
+<span class="text-[10px] font-medium text-slate-500 uppercase">Minutes</span>
+</div>
+<div class="text-2xl font-bold pt-4 text-primary">:</div>
+<div class="flex flex-col items-center gap-2">
+<div class="w-16 h-16 bg-primary/10 dark:bg-primary/20 rounded-xl flex items-center justify-center border border-primary/20">
+<span class="text-2xl font-bold text-primary">35</span>
+</div>
+<span class="text-[10px] font-medium text-slate-500 uppercase">Seconds</span>
+</div>
+</div>
+</section>
+<!-- Prayer List -->
+<main class="flex-1 px-4 pb-24 space-y-4">
+<h2 class="text-lg font-bold mb-4">Jadwal Hari Ini</h2>
+<!-- Subuh (On-Time) -->
+<div class="bg-white dark:bg-slate-800 p-4 rounded-xl border-l-4 border-primary shadow-sm flex items-center justify-between">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="font-bold text-slate-900 dark:text-slate-100">Subuh</span>
+<span class="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-bold">ON-TIME</span>
+</div>
+<p class="text-2xl font-bold">04:35</p>
+<p class="text-[10px] text-slate-500">Batas: 04:55</p>
+</div>
+<div class="flex flex-col items-end gap-2">
+<button class="bg-primary text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+                    Done
+                </button>
+</div>
+</div>
+<!-- Dzuhur (Performed) -->
+<div class="bg-white dark:bg-slate-800 p-4 rounded-xl border-l-4 border-yellow-500 shadow-sm flex items-center justify-between">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="font-bold text-slate-900 dark:text-slate-100">Dzuhur</span>
+<span class="px-2 py-0.5 rounded-full bg-yellow-500/10 text-yellow-600 text-[10px] font-bold uppercase">Performed</span>
+</div>
+<p class="text-2xl font-bold">12:02</p>
+<p class="text-[10px] text-slate-500">Batas: 12:22</p>
+</div>
+<div class="flex flex-col items-end gap-2">
+<button class="bg-yellow-500 text-white px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">schedule</span>
+                    Late
+                </button>
+</div>
+</div>
+<!-- Ashar (Pending/Active) -->
+<div class="bg-primary/5 dark:bg-primary/10 p-4 rounded-xl border border-primary/30 shadow-sm flex items-center justify-between">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="font-bold text-slate-900 dark:text-slate-100">Ashar</span>
+<span class="px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 text-[10px] font-bold uppercase">Pending</span>
+</div>
+<p class="text-2xl font-bold text-primary">15:15</p>
+<p class="text-[10px] text-slate-500">Batas: 15:35</p>
+</div>
+<div class="flex flex-col items-end gap-2">
+<button class="bg-white dark:bg-slate-700 border border-primary text-primary px-4 py-2 rounded-lg text-sm font-bold hover:bg-primary hover:text-white transition-colors">
+                    Check-in
+                </button>
+</div>
+</div>
+<!-- Maghrib (Pending) -->
+<div class="bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm flex items-center justify-between opacity-70">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="font-bold text-slate-900 dark:text-slate-100">Maghrib</span>
+</div>
+<p class="text-2xl font-bold">18:05</p>
+<p class="text-[10px] text-slate-500">Batas: 18:25</p>
+</div>
+<div class="flex flex-col items-end gap-2">
+<button class="bg-slate-100 dark:bg-slate-700 text-slate-400 px-4 py-2 rounded-lg text-sm font-bold cursor-not-allowed" disabled="">
+                    Check-in
+                </button>
+</div>
+</div>
+<!-- Isya (Missed - Example for visual) -->
+<div class="bg-white dark:bg-slate-800 p-4 rounded-xl border-l-4 border-red-500 shadow-sm flex items-center justify-between opacity-70">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2">
+<span class="font-bold text-slate-900 dark:text-slate-100">Isya</span>
+<span class="px-2 py-0.5 rounded-full bg-red-500/10 text-red-600 text-[10px] font-bold uppercase">Yesterday Missed</span>
+</div>
+<p class="text-2xl font-bold">19:15</p>
+<p class="text-[10px] text-slate-500">Batas: 19:35</p>
+</div>
+<div class="flex flex-col items-end gap-2">
+<span class="material-symbols-outlined text-red-500">error</span>
+</div>
+</div>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 px-6 py-3 flex justify-between items-center z-50">
+<a class="flex flex-col items-center gap-1 text-primary" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1">home</span>
+<span class="text-[10px] font-bold">Home</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500" href="#">
+<span class="material-symbols-outlined">bar_chart</span>
+<span class="text-[10px] font-bold">Stats</span>
+</a>
+<a class="flex flex-col items-center gap-1 text-slate-400 dark:text-slate-500" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-[10px] font-bold">Settings</span>
+</a>
+</nav>
+</body></html>
