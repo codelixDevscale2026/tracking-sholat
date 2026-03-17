@@ -13,6 +13,8 @@ datasource db {
   provider = "postgresql"
 }
 
+
+
 model User {
   id            Int                    @id @default(autoincrement())
   fullName      String                 @map("full_name")
@@ -20,13 +22,15 @@ model User {
   email         String                 @unique
   passwordHash  String                 @map("password_hash")
   createdAt     DateTime               @default(now()) @map("created_at")
-  tokens        AuthToken[]
+  updatedAt     DateTime               @updatedAt @map("updated_at")
+  authTokens    AuthToken[]
   settings      PrayerSettings?
   schedules     DailyPrayerSchedule[]
-  logs          PrayerLog[]
+  prayerLogs    PrayerLog[]
 
   @@map("users")
 }
+
 
 model AuthToken {
   id          Int       @id @default(autoincrement())
