@@ -8,6 +8,7 @@
 		"db:migrate": "pnpm prisma migrate dev",
 		"db:generate": "pnpm prisma generate",
 		"db:studio": "pnpm prisma studio",
+		"db:seed": "pnpm prisma db seed",
 		"with-env": "dotenv -e ../../.env --"
 	},
 	"dependencies": {
@@ -19,13 +20,18 @@
 		"date-fns": "^4.1.0",
 		"dotenv": "^17.3.1",
 		"hono": "^4.12.1",
+		"pg": "^8.20.0",
 		"prisma": "^7.4.1",
 		"zod": "^4.3.6"
 	},
 	"devDependencies": {
 		"@types/bcryptjs": "^3.0.0",
 		"@types/node": "^20.11.17",
+		"@types/pg": "^8.18.0",
 		"tsx": "^4.7.1",
 		"typescript": "^5.8.3"
+	},
+	"prisma": {
+		"seed": "tsx prisma/seed.ts"
 	}
 }
