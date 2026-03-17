@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { useAuthFeature } from "@/features/auth/hooks/useAuthFeature";
+import { useSettingsFeature } from "@/features/settings/hooks/useSettingsFeature";
 
 export const Route = createFileRoute("/")({
 	beforeLoad: () => {
@@ -21,6 +22,7 @@ export const Route = createFileRoute("/")({
 
 function DashboardPage() {
 	const { user } = useAuthFeature();
+	const { settings } = useSettingsFeature();
 
 	const prayers = [
 		{
@@ -77,7 +79,7 @@ function DashboardPage() {
 						<div className="flex items-center gap-1 text-zinc-500 dark:text-zinc-400">
 							<MapPin className="w-3 h-3" />
 							<p className="text-[10px] font-medium uppercase tracking-wider">
-								Jakarta, Indonesia
+								{settings?.cityName || "Loading..."}
 							</p>
 						</div>
 					</div>
@@ -93,7 +95,7 @@ function DashboardPage() {
 			</header>
 
 			{/* Countdown Section */}
-			<section className="px-6 py-8 text-center bg-white/50 dark:bg-zinc-900/30 rounded-b-[2.5rem] shadow-sm mb-6 border-b border-emerald-500/5">
+			<section className="px-6 py-8 text-center bg-white/50 dark:bg-zinc-900/30 mb-6">
 				<p className="text-emerald-600 dark:text-emerald-400 font-extrabold text-sm tracking-[0.2em] uppercase mb-6 drop-shadow-sm">
 					Menuju Ashar
 				</p>
