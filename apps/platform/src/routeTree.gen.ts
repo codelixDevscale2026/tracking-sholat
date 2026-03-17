@@ -15,6 +15,7 @@ import { Route as RegisterRouteImport } from './routes/register'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SettingsCalculationMethodRouteImport } from './routes/settings.calculation-method'
 
 const StatsRoute = StatsRouteImport.update({
   id: '/stats',
@@ -46,22 +47,30 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsCalculationMethodRoute =
+  SettingsCalculationMethodRouteImport.update({
+    id: '/calculation-method',
+    path: '/calculation-method',
+    getParentRoute: () => SettingsRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/settings': typeof SettingsRoute
+  '/settings': typeof SettingsRouteWithChildren
   '/stats': typeof StatsRoute
+  '/settings/calculation-method': typeof SettingsCalculationMethodRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/settings': typeof SettingsRoute
+  '/settings': typeof SettingsRouteWithChildren
   '/stats': typeof StatsRoute
+  '/settings/calculation-method': typeof SettingsCalculationMethodRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -69,14 +78,29 @@ export interface FileRoutesById {
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/settings': typeof SettingsRoute
+  '/settings': typeof SettingsRouteWithChildren
   '/stats': typeof StatsRoute
+  '/settings/calculation-method': typeof SettingsCalculationMethodRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/history' | '/login' | '/register' | '/settings' | '/stats'
+  fullPaths:
+    | '/'
+    | '/history'
+    | '/login'
+    | '/register'
+    | '/settings'
+    | '/stats'
+    | '/settings/calculation-method'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/history' | '/login' | '/register' | '/settings' | '/stats'
+  to:
+    | '/'
+    | '/history'
+    | '/login'
+    | '/register'
+    | '/settings'
+    | '/stats'
+    | '/settings/calculation-method'
   id:
     | '__root__'
     | '/'
@@ -85,6 +109,7 @@ export interface FileRouteTypes {
     | '/register'
     | '/settings'
     | '/stats'
+    | '/settings/calculation-method'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -92,7 +117,7 @@ export interface RootRouteChildren {
   HistoryRoute: typeof HistoryRoute
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
-  SettingsRoute: typeof SettingsRoute
+  SettingsRoute: typeof SettingsRouteWithChildren
   StatsRoute: typeof StatsRoute
 }
 
@@ -140,15 +165,34 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/calculation-method': {
+      id: '/settings/calculation-method'
+      path: '/calculation-method'
+      fullPath: '/settings/calculation-method'
+      preLoaderRoute: typeof SettingsCalculationMethodRouteImport
+      parentRoute: typeof SettingsRoute
+    }
   }
 }
+
+interface SettingsRouteChildren {
+  SettingsCalculationMethodRoute: typeof SettingsCalculationMethodRoute
+}
+
+const SettingsRouteChildren: SettingsRouteChildren = {
+  SettingsCalculationMethodRoute: SettingsCalculationMethodRoute,
+}
+
+const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
+  SettingsRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HistoryRoute: HistoryRoute,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
-  SettingsRoute: SettingsRoute,
+  SettingsRoute: SettingsRouteWithChildren,
   StatsRoute: StatsRoute,
 }
 export const routeTree = rootRouteImport
