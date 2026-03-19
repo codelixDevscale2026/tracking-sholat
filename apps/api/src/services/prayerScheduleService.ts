@@ -13,6 +13,7 @@ import {
 	fetchFromAlAdhan,
 	fetchFromMyQuran,
 	type PrayerName,
+	type ProviderResult,
 } from "./prayerProviders.js";
 
 const PRAYER_ORDER: PrayerName[] = [
@@ -98,7 +99,7 @@ export async function getTodaySchedule(options: { userId: number }) {
 	});
 
 	if (!hasAllPrayers || !isCacheCompatible) {
-		let provider: PrayerSchedule;
+		let provider: ProviderResult;
 		try {
 			provider = await fetchFromAlAdhan({
 				date: ymd,
