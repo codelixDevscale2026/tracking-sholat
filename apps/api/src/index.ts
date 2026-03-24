@@ -4,7 +4,7 @@ import { serve } from "@hono/node-server";
 import { config as dotenvConfig } from "dotenv";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
-import { prayerRoutes } from "./routes/prayers.js";
+import { prayerRoutes } from "./features/prayer/prayer.route.js";
 
 if (!process.env.DATABASE_URL) {
 	const __filename = fileURLToPath(import.meta.url);

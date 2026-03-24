@@ -2,19 +2,20 @@ import { addMinutes, differenceInSeconds } from "date-fns";
 import type {
 	DailyPrayerSchedule,
 	PrayerLog,
-} from "../generated/prisma/index.js";
-import { prisma } from "../utils/prisma.js";
+} from "../../generated/prisma/index.js";
+import { prisma } from "../../utils/prisma.js";
 import {
 	getYMDInTimeZone,
 	parseHHMM,
 	zonedDateTimeToUtc,
-} from "../utils/timezone.js";
+} from "../../utils/timezone.js";
+import type { PrayerTodayResponse } from "./prayer.schema.js";
 import {
 	fetchFromAlAdhan,
 	fetchFromMyQuran,
 	type PrayerName,
 	type ProviderResult,
-} from "./prayerProviders.js";
+} from "./prayer.service.js";
 
 const PRAYER_ORDER: PrayerName[] = [
 	"subuh",
@@ -24,10 +25,11 @@ const PRAYER_ORDER: PrayerName[] = [
 	"isya",
 ];
 
-function toNumberDecimal(value: any) {
+function toNumberDecimal(value: unknown) {
 	if (value == null) return null;
 	if (typeof value === "number") return value;
-	if (typeof value?.toNumber === "function") return value.toNumber();
+	if (typeof (value as any)?.toNumber === "function")
+		return (value as any).toNumber();
 	return Number(value);
 }
 
@@ -42,7 +44,9 @@ function getPrayerStatus(options: {
 	return "pending";
 }
 
-export async function getTodaySchedule(options: { userId: number }) {
+export async function getTodaySchedule(options: {
+	userId: number;
+}): Promise<PrayerTodayResponse> {
 	const { userId } = options;
 	// Ensure FK constraints won't fail when caching schedules.
 	// In real usage, the user is created via the auth/register flow.

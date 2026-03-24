@@ -1,4 +1,4 @@
-import { parseHHMM } from "../utils/timezone.js";
+import { parseHHMM } from "../../utils/timezone.js";
 
 export type PrayerName = "subuh" | "dzuhur" | "ashar" | "maghrib" | "isya";
 

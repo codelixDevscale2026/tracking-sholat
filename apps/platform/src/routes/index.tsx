@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { PrayerCard } from "@/components/PrayerCard";
 import { Button } from "@/components/ui/button";
-import { useCountdown, useTodaySchedule } from "@/hooks/useTodaySchedule";
+import type { PrayerSchedule } from "@/features/prayer";
+import { PrayerCard, useCountdown, useTodaySchedule } from "@/features/prayer";
 
 export const Route = createFileRoute("/")({ component: App });
 
@@ -105,7 +105,7 @@ function App() {
 					</div>
 				) : (
 					<div className="mt-6 space-y-3">
-						{schedules.map((s) => (
+						{schedules.map((s: PrayerSchedule) => (
 							<PrayerCard
 								key={s.prayerName}
 								prayerName={s.prayerName}

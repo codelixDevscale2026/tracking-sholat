@@ -1,16 +1,11 @@
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { z } from "zod";
-import { getTodaySchedule } from "../services/prayerScheduleService.js";
+import { getTodaySchedule } from "./prayer.controller.js";
+import { GetTodayScheduleQuerySchema } from "./prayer.schema.js";
 
 export const prayerRoutes = new Hono().get(
 	"/today",
-	zValidator(
-		"query",
-		z.object({
-			userId: z.coerce.number().int().positive(),
-		}),
-	),
+	zValidator("query", GetTodayScheduleQuerySchema),
 	async (c) => {
 		const { userId } = c.req.valid("query");
 

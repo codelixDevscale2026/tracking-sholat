@@ -1,6 +1,15 @@
+import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
 
 type PrayerStatus = string | undefined;
+
+interface PrayerCardProps {
+	prayerName: string;
+	adzanTime: string;
+	bufferLimit: string;
+	status?: PrayerStatus;
+	isNext?: boolean;
+}
 
 export function PrayerCard({
 	prayerName,
@@ -8,13 +17,7 @@ export function PrayerCard({
 	bufferLimit,
 	status,
 	isNext,
-}: {
-	prayerName: string;
-	adzanTime: string;
-	bufferLimit: string;
-	status?: PrayerStatus;
-	isNext?: boolean;
-}) {
+}: PrayerCardProps): ReactNode {
 	return (
 		<div
 			className={cn(
