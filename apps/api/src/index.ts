@@ -1,23 +1,44 @@
-import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { serve } from "@hono/node-server";
-import { config as dotenvConfig } from "dotenv";
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { HTTPException } from "hono/http-exception";
+import authRouter from "./features/auth/auth.route.js";
 import { prayerRoutes } from "./features/prayer/prayer.route.js";
+import settingsRouter from "./features/settings/settings.route.js";
+import type { User } from "./generated/prisma/index.js";
 
-if (!process.env.DATABASE_URL) {
-	const __filename = fileURLToPath(import.meta.url);
-	const __dirname = path.dirname(__filename);
-	dotenvConfig({ path: path.resolve(__dirname, "../../.env") });
-}
+export type Variables = {
+	user: User;
+};
 
-const app = new Hono()
+const app = new Hono<{ Variables: Variables }>()
 	.use(cors())
 	.get("/", (c) => {
 		return c.json({ message: "Hello Hono!" });
 	})
+	.route("/api/v1/auth", authRouter)
+	.route("/api/v1/settings", settingsRouter)
 	.route("/api/v1/prayers", prayerRoutes);
+
+// Global Error Handler to ensure all errors are returned as JSON
+app.onError((err, c) => {
+	if (err instanceof HTTPException) {
+		return c.json(
+			{
+				message: err.message,
+				status: err.status,
+			},
+			err.status,
+		);
+	}
+
+	return c.json(
+		{
+			message: err.message || "Internal Server Error",
+		},
+		500,
+	);
+});
 
 export type AppType = typeof app;
 
