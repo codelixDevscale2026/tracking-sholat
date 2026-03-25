@@ -3,6 +3,7 @@ import { Hono } from "hono";
 import { cors } from "hono/cors";
 import { HTTPException } from "hono/http-exception";
 import authRouter from "./features/auth/auth.route.js";
+import { prayerRoutes } from "./features/prayer/prayer.route.js";
 import settingsRouter from "./features/settings/settings.route.js";
 import type { User } from "./generated/prisma/index.js";
 
@@ -16,7 +17,8 @@ const app = new Hono<{ Variables: Variables }>()
 		return c.json({ message: "Hello Hono!" });
 	})
 	.route("/api/v1/auth", authRouter)
-	.route("/api/v1/settings", settingsRouter);
+	.route("/api/v1/settings", settingsRouter)
+	.route("/api/v1/prayers", prayerRoutes);
 
 // Global Error Handler to ensure all errors are returned as JSON
 app.onError((err, c) => {
