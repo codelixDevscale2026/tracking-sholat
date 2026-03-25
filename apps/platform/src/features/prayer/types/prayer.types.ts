@@ -1,8 +1,17 @@
+export type PrayerStatus =
+	| "upcoming"
+	| "pending"
+	| "ON-TIME"
+	| "PERFORMED"
+	| "LATE"
+	| "MISSED"
+	| string;
+
 export interface PrayerSchedule {
 	prayerName: string;
 	scheduledAdzanTime: string;
 	bufferLimit: string;
-	status?: string;
+	status?: PrayerStatus;
 }
 
 export interface PrayerTodayResponse {
@@ -16,7 +25,7 @@ export interface PrayerTodayResponse {
 }
 
 export interface UseTodayScheduleOptions {
-	userId: number;
+	userId?: number;
 	enabled?: boolean;
 	refetchInterval?: number;
 }
