@@ -1,9 +1,7 @@
-FROM node:24-alpine AS base
+FROM node:24-slim AS base
 
 # Install OpenSSL for Prisma
-RUN sed -i 's/dl-cdn.alpinelinux.org/dl-cdn.alpinelinux.org/g' /etc/apk/repositories || true
-# Retry apk add to handle transient DNS errors
-RUN apk update && apk add --no-cache openssl || (sleep 2 && apk update && apk add --no-cache openssl) || (sleep 5 && apk update && apk add --no-cache openssl)
+RUN apt-get update && apt-get install -y openssl ca-certificates && rm -rf /var/lib/apt/lists/*
 RUN corepack enable
 
 FROM base AS builder

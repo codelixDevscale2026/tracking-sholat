@@ -1,7 +1,7 @@
-FROM node:24-alpine AS base
+FROM node:24-slim AS base
 
-# Retry apk add to handle transient DNS errors
-RUN apk update && apk add --no-cache openssl || (sleep 2 && apk update && apk add --no-cache openssl) || (sleep 5 && apk update && apk add --no-cache openssl)
+# Install dependencies for Prisma
+RUN apt-get update && apt-get install -y openssl ca-certificates && rm -rf /var/lib/apt/lists/*
 RUN corepack enable
 
 FROM base AS builder
