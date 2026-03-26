@@ -31,7 +31,7 @@ jobs:
             git checkout main
             git pull origin main
 
-            pnpm install --frozen-lockfile --network-timeout 100000
+            pnpm install
 
             # Database & Migration
             cd apps/api
