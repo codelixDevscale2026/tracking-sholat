@@ -35,8 +35,8 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/packages ./packages
 COPY --from=builder /app/apps/platform/node_modules ./apps/platform/node_modules
-COPY --from=builder /app/apps/platform/dist ./dist
-COPY --from=builder /app/apps/platform/package.json ./package.json
+COPY --from=builder /app/apps/platform/dist ./apps/platform/dist
+COPY --from=builder /app/apps/platform/package.json ./apps/platform/package.json
 
 EXPOSE 3000
 
