@@ -26,7 +26,7 @@ RUN [ -f apps/api/src/generated/prisma/index.js ] || exit 1
 RUN pnpm --filter api build
 
 # --- TAHAP DEPLOY: Meratakan dependensi ---
-RUN pnpm --filter api --prod deploy /app/out
+RUN pnpm --filter api --prod deploy /app/out --legacy
 
 FROM base AS runner
 WORKDIR /app
