@@ -18,6 +18,7 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
+          script_stop: true
           script: |
             # Memaksa load path agar pnpm/pm2 terbaca
             export PNPM_HOME="/home/anas/.local/share/pnpm"
@@ -30,7 +31,7 @@ jobs:
             git checkout main
             git pull origin main
 
-            pnpm install --frozen-lockfile
+            pnpm install --frozen-lockfile --network-timeout 100000
 
             # Database & Migration
             cd apps/api
