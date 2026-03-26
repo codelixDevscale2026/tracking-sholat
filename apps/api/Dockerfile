@@ -25,6 +25,9 @@ RUN [ -f apps/api/src/generated/prisma/index.js ] || exit 1
 # Build the API
 RUN pnpm --filter api build
 
+# Pastikan Prisma yang digenerate ikut disalin ke folder dist agar runtime (node apps/api/dist/src/index.js) bisa menemukannya.
+RUN mkdir -p apps/api/dist/src/generated/prisma && cp -r apps/api/src/generated/prisma/* apps/api/dist/src/generated/prisma/ || true
+
 # --- TAHAP DEPLOY: Meratakan dependensi ---
 RUN pnpm --filter api --prod deploy /app/out --legacy
 
