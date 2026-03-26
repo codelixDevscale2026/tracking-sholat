@@ -13,7 +13,19 @@ datasource db {
   provider = "postgresql"
 }
 
+enum PrayerName {
+  subuh
+  dzuhur
+  ashar
+  maghrib
+  isya
+}
 
+enum PrayerStatus {
+  ON_TIME
+  PERFORMED
+  MISSED
+}
 
 model User {
   id            Int                    @id @default(autoincrement())
@@ -61,10 +73,10 @@ model PrayerSettings {
 }
 
 model DailyPrayerSchedule {
-  id                 Int      @id @default(autoincrement())
-  userId             Int      @map("user_id")
-  date               DateTime @db.Date
-  prayerName         String   @map("prayer_name")
+  id                 Int        @id @default(autoincrement())
+  userId             Int        @map("user_id")
+  date               DateTime   @db.Date
+  prayerName         PrayerName @map("prayer_name")
   scheduledAdzanTime DateTime @map("scheduled_adzan_time")
   calculationMethod  String   @map("calculation_method")
   latitude           Decimal  @db.Decimal(9, 6)
@@ -77,17 +89,17 @@ model DailyPrayerSchedule {
 }
 
 model PrayerLog {
-  id                    Int       @id @default(autoincrement())
-  userId                Int       @map("user_id")
-  prayerName            String    @map("prayer_name")
-  date                  DateTime  @db.Date
-  checkInTimestamp      DateTime? @map("check_in_timestamp")
-  status                String
-  bufferSnapshotMinutes Int       @map("buffer_snapshot_minutes")
-  adzanSnapshotTime     DateTime  @map("adzan_snapshot_time")
-  responseTimeMinutes   Int?      @map("response_time_minutes")
-  createdAt             DateTime  @default(now()) @map("created_at")
-  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id                    Int          @id @default(autoincrement())
+  userId                Int          @map("user_id")
+  prayerName            PrayerName   @map("prayer_name")
+  date                  DateTime     @db.Date
+  checkInTimestamp      DateTime?    @map("check_in_timestamp")
+  status                PrayerStatus
+  bufferSnapshotMinutes Int          @map("buffer_snapshot_minutes")
+  adzanSnapshotTime     DateTime     @map("adzan_snapshot_time")
+  responseTimeMinutes   Int?         @map("response_time_minutes")
+  createdAt             DateTime     @default(now()) @map("created_at")
+  user                  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, date, prayerName])
   @@map("prayer_logs")

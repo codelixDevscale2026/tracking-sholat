@@ -171,6 +171,8 @@ export function PrayerDashboard() {
 								adzanTime={formatHHMM(s.scheduledAdzanTime)}
 								bufferLimit={formatHHMM(s.bufferLimit)}
 								status={s.status}
+								isChecked={s.isChecked}
+								userId={user?.id}
 								isNext={
 									nextPrayerName
 										? s.prayerName.toLowerCase() ===
