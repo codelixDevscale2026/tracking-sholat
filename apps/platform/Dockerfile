@@ -14,7 +14,7 @@ COPY apps/api ./apps/api
 COPY apps/platform ./apps/platform
 
 # Install dependencies (frozen lockfile)
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --only-built-dependencies
 
 # Generate Prisma client for shared types to resolve
 RUN cd apps/api && pnpm db:generate
