@@ -22,8 +22,8 @@ RUN cd apps/api && pnpm db:generate
 # Build the API
 RUN pnpm --filter api build
 
-# Since `tsc` ignores `.node` binaries, copy them from src to dist manually
-RUN mkdir -p apps/api/dist/generated/prisma && cp -r apps/api/src/generated/prisma/*.node apps/api/dist/generated/prisma/ || true
+# Since `tsc` ignores `.node` binaries and sometimes generated JS, copy them from src to dist manually
+RUN mkdir -p apps/api/dist/src/generated/prisma && cp -r apps/api/src/generated/prisma/* apps/api/dist/src/generated/prisma/ || true
 
 FROM base AS runner
 WORKDIR /app
