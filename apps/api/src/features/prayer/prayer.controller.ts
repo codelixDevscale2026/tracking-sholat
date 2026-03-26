@@ -19,6 +19,7 @@ import {
 } from "./prayer.service.js";
 import {
 	calculateCheckInStatus,
+	type PrayerStatus,
 	validateCheckInTime,
 } from "./prayer-checkin.service.js";
 
@@ -391,7 +392,7 @@ export async function checkInPrayer(options: {
 		adzanTime: schedule.scheduledAdzanTime.toISOString(),
 		bufferLimit: checkInResult.bufferLimit.toISOString(),
 		checkInAt: now.toISOString(),
-		status: prayerLog.status,
+		status: prayerLog.status as PrayerStatus,
 		responseTimeMinutes: prayerLog.responseTimeMinutes ?? 0,
 	};
 }
