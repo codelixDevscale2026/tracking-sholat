@@ -34,7 +34,7 @@ services:
     image: ghcr.io/${GITHUB_REPOSITORY_OWNER}/tracking-sholat-platform:latest
     restart: always
     environment:
-      - VITE_API_BASE_URL=https://api.sholat.anaslabs.my.id
+      - VITE_API_BASE_URL=http://103.172.204.124:8001
     ports:
       - "3001:3000"
     depends_on:

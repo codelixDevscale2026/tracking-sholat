@@ -21,6 +21,10 @@ RUN pnpm install --frozen-lockfile
 # Generate Prisma client for shared types to resolve
 RUN cd apps/api && pnpm prisma generate
 
+# Terima build arg untuk API URL
+ARG VITE_API_BASE_URL=http://103.172.204.124:8001
+ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
+
 # Build the Frontend platform
 RUN pnpm --filter platform build
 
