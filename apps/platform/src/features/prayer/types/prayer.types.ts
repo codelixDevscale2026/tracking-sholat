@@ -1,17 +1,20 @@
+export type PrayerName = "subuh" | "dzuhur" | "ashar" | "maghrib" | "isya";
+
 export type PrayerStatus =
 	| "upcoming"
 	| "pending"
-	| "ON-TIME"
+	| "ON_TIME"
 	| "PERFORMED"
-	| "LATE"
-	| "MISSED"
-	| string;
+	| "MISSED";
 
 export interface PrayerSchedule {
-	prayerName: string;
+	prayerName: PrayerName;
 	scheduledAdzanTime: string;
 	bufferLimit: string;
 	status?: PrayerStatus;
+	checkInAt?: string | null;
+	responseTimeMinutes?: number | null;
+	isChecked?: boolean;
 }
 
 export interface PrayerTodayResponse {
@@ -19,9 +22,22 @@ export interface PrayerTodayResponse {
 	cityName: string;
 	timezone?: string;
 	nextPrayer?: {
-		prayerName: string;
+		prayerName: PrayerName;
 		countdownSeconds: number;
 	};
+}
+
+export interface CheckInRequest {
+	prayerName: PrayerName;
+}
+
+export interface CheckInResponse {
+	prayerName: PrayerName;
+	adzanTime: string;
+	bufferLimit: string;
+	checkInAt: string;
+	status: "ON_TIME" | "PERFORMED" | "MISSED";
+	responseTimeMinutes: number;
 }
 
 export interface UseTodayScheduleOptions {
