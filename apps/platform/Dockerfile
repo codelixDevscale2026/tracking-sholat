@@ -24,17 +24,17 @@ RUN cd apps/api && pnpm db:generate
 RUN pnpm --filter platform build
 
 FROM base AS runner
-WORKDIR /app
+WORKDIR /app/apps/platform
 
 ENV NODE_ENV=production
 ENV PORT=3000
 
 # Copy necessary files from the builder
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/packages ./packages
-COPY --from=builder /app/apps/platform/node_modules ./apps/platform/node_modules
-COPY --from=builder /app/apps/platform/dist ./apps/platform/dist
-COPY --from=builder /app/apps/platform/package.json ./apps/platform/package.json
+COPY --from=builder /app/node_modules ../../node_modules
+COPY --from=builder /app/packages ../../packages
+COPY --from=builder /app/apps/platform/node_modules ./node_modules
+COPY --from=builder /app/apps/platform/dist ./dist
+COPY --from=builder /app/apps/platform/package.json ./package.json
 
 EXPOSE 3000
 
