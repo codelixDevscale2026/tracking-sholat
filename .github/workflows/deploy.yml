@@ -84,19 +84,22 @@ jobs:
           script: |
             OWNER_LOWER=$(echo ${{ github.repository_owner }} | tr '[:upper:]' '[:lower:]')
             
-            # Login ke GHCR di VPS
+            # 1. UPDATE FILE KONFIGURASI DI VPS (docker-compose.yml, dll)
+            cd ~/tracking-sholat
+            git fetch origin main
+            git reset --hard origin/main # Paksa update ke versi terbaru dari GitHub
+            
+            # 2. Login ke GHCR
             echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
             
-            # Pull image terbaru
+            # 3. Pull image terbaru yang sudah di-build GitHub
             docker pull ghcr.io/${OWNER_LOWER}/tracking-sholat-api:latest
             docker pull ghcr.io/${OWNER_LOWER}/tracking-sholat-platform:latest
             
-            # Pindah ke folder project untuk docker compose (pastikan file ini ada di server)
-            cd ~/tracking-sholat
-            
-            # Jalankan dengan image terbaru (Teruskan GITHUB_REPOSITORY_OWNER yang lowercase ke docker compose)
+            # 4. Jalankan Compose (Pastikan GITHUB_REPOSITORY_OWNER lowercase diteruskan)
             export GITHUB_REPOSITORY_OWNER=${OWNER_LOWER}
-            docker compose up -d --force-recreate
+            # Paksa Docker hanya PULL, jangan BUILD di VPS
+            docker compose up -d --force-recreate --no-build
             
-            # Bersihkan image lama
+            # 5. Bersihkan image lama
             docker image prune -f
