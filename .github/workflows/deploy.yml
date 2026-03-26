@@ -19,28 +19,31 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           script: |
-            # Sesuaikan dengan direktori tempat Anda me-clone repo di server
+            # Memaksa load path agar pnpm/pm2 terbaca
+            export PNPM_HOME="/home/anas/.local/share/pnpm"
+            export PATH="$PNPM_HOME:$PATH:/home/anas/.nvm/versions/node/v24.12.0/bin"
+            
+            # Pindah direktori
             cd ~/tracking-sholat
             
-            # Pastikan berada di branch main dan pull update terbaru
+            # Pull update
             git checkout main
             git pull origin main
 
-            # Install dependensi
             pnpm install --frozen-lockfile
 
-            # Generate Prisma Client & eksekusi migrasi DB (Pastikan .env sudah ada di sever)
+            # Database & Migration
             cd apps/api
             pnpm prisma generate
+            # Matikan postgres lokal jika ada (menggunakan sudo jika perlu, tapi coba dulu tanpa ini jika sudah mati)
+            # sudo systemctl stop postgresql 
             pnpm prisma migrate deploy
             cd ../..
 
-            # Build backend dan frontend
             pnpm build
 
-            # Pastikan service Database berjalan di Docker
+            # Docker DB (Pastikan port 5432 lokal sudah mati agar baris ini tidak error)
             docker compose up -d db
 
-            # Restart / Jalankan instance aplikasi menggunakan PM2
             pm2 start ecosystem.config.cjs || pm2 reload ecosystem.config.cjs
             pm2 save
