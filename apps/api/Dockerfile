@@ -22,23 +22,21 @@ RUN cd apps/api && pnpm db:generate
 # Build the API
 RUN pnpm --filter api build
 
-# Since `tsc` ignores `.node` binaries and sometimes generated JS, copy them from src to dist manually
-RUN mkdir -p apps/api/dist/src/generated/prisma && cp -r apps/api/src/generated/prisma/* apps/api/dist/src/generated/prisma/ || true
+# --- TAHAP DEPLOY: Meratakan dependensi ---
+RUN pnpm --filter api --prod deploy /app/out
 
 FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Copy built files and dependencies
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/packages ./packages
-COPY --from=builder /app/apps/api/node_modules ./apps/api/node_modules
+# Menyalin hasil deploy (hanya source & deps produksi)
+COPY --from=builder /app/out ./apps/api
+# Salin hasil build (dist) yang kita butuhkan untuk runtime
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
-COPY --from=builder /app/apps/api/package.json ./apps/api/package.json
-COPY --from=builder /app/apps/api/prisma ./apps/api/prisma
 
 EXPOSE 8000
 
-CMD ["node", "apps/api/dist/src/index.js"]
+# Jalankan aplikasi dari folder internalnya
+WORKDIR /app/apps/api
+CMD ["node", "dist/src/index.js"]
