@@ -1,0 +1,46 @@
+name: Deploy Web & API ke Server via SSH
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Deploy to IDCloudHost using SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            # Sesuaikan dengan direktori tempat Anda me-clone repo di server
+            cd ~/tracking-sholat
+            
+            # Pastikan berada di branch main dan pull update terbaru
+            git checkout main
+            git pull origin main
+
+            # Install dependensi
+            pnpm install --frozen-lockfile
+
+            # Generate Prisma Client & eksekusi migrasi DB (Pastikan .env sudah ada di sever)
+            cd apps/api
+            pnpm prisma generate
+            pnpm prisma migrate deploy
+            cd ../..
+
+            # Build backend dan frontend
+            pnpm build
+
+            # Pastikan service Database berjalan di Docker
+            docker compose up -d db
+
+            # Restart / Jalankan instance aplikasi menggunakan PM2
+            pm2 start ecosystem.config.cjs || pm2 reload ecosystem.config.cjs
+            pm2 save
