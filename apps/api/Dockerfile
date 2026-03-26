@@ -17,7 +17,10 @@ RUN pnpm config set only-built-dependencies prisma,@prisma/engines esbuild
 RUN pnpm install --frozen-lockfile
 
 # Generate Prisma Client
-RUN cd apps/api && pnpm db:generate
+RUN cd apps/api && pnpm prisma generate
+
+# VERIFIKASI: Pastikan file index.js benar-benar ada di folder target
+RUN [ -f apps/api/src/generated/prisma/index.js ] || exit 1
 
 # Build the API
 RUN pnpm --filter api build
