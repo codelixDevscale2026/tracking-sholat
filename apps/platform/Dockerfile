@@ -15,28 +15,30 @@ COPY apps/platform ./apps/platform
 
 # Install dependencies (frozen lockfile)
 RUN pnpm config set only-built-dependencies prisma,@prisma/engines esbuild
+RUN pnpm config set node-linker hoisted
 RUN pnpm install --frozen-lockfile
 
 # Generate Prisma client for shared types to resolve
-RUN cd apps/api && pnpm db:generate
+RUN cd apps/api && pnpm prisma generate
 
 # Build the Frontend platform
 RUN pnpm --filter platform build
 
 FROM base AS runner
-WORKDIR /app/apps/platform
+WORKDIR /app
 
 ENV NODE_ENV=production
 ENV PORT=3000
 
-# Copy necessary files from the builder
-COPY --from=builder /app/node_modules ../../node_modules
-COPY --from=builder /app/packages ../../packages
-COPY --from=builder /app/apps/platform/node_modules ./node_modules
+# Copy necessary files from the builder (flattened node_modules)
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/packages ./packages
+COPY --from=builder /app/apps/platform/node_modules ./apps/platform/node_modules
 COPY --from=builder /app/apps/platform/dist ./dist
 COPY --from=builder /app/apps/platform/package.json ./package.json
 
 EXPOSE 3000
 
-# TanStack Start with Vite requires a server wrapper; vite preview handles the SSR injection and static serving properly.
-CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "3000"]
+# Jalankan preview dari folder platform
+CMD ["npm", "run", "preview", "--prefix", "apps/platform", "--", "--host", "0.0.0.0", "--port", "3000"]

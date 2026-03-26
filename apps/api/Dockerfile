@@ -14,13 +14,11 @@ COPY apps/api ./apps/api
 
 # Install dependencies (frozen lockfile)
 RUN pnpm config set only-built-dependencies prisma,@prisma/engines esbuild
+RUN pnpm config set node-linker hoisted
 RUN pnpm install --frozen-lockfile
 
 # Generate Prisma Client
 RUN cd apps/api && pnpm prisma generate
-
-# VERIFIKASI: Pastikan file index.js benar-benar ada di folder target
-RUN [ -f apps/api/src/generated/prisma/index.js ] || exit 1
 
 # Build the API
 RUN pnpm --filter api build
@@ -28,21 +26,21 @@ RUN pnpm --filter api build
 # Pastikan Prisma yang digenerate ikut disalin ke folder dist agar runtime (node apps/api/dist/src/index.js) bisa menemukannya.
 RUN mkdir -p apps/api/dist/src/generated/prisma && cp -r apps/api/src/generated/prisma/* apps/api/dist/src/generated/prisma/ || true
 
-# --- TAHAP DEPLOY: Meratakan dependensi ---
-RUN pnpm --filter api --prod deploy /app/out --legacy
-
 FROM base AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Menyalin hasil deploy (hanya source & deps produksi)
-COPY --from=builder /app/out ./apps/api
-# Salin hasil build (dist) yang kita butuhkan untuk runtime
+# Copy built files and dependencies (now flattened due to 'hoisted' linker)
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/packages ./packages
+COPY --from=builder /app/apps/api/node_modules ./apps/api/node_modules
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
+COPY --from=builder /app/apps/api/package.json ./apps/api/package.json
+COPY --from=builder /app/apps/api/prisma ./apps/api/prisma
 
 EXPOSE 8000
 
-# Jalankan aplikasi dari folder internalnya
-WORKDIR /app/apps/api
-CMD ["node", "dist/src/index.js"]
+# Jalankan aplikasi dari folder yang tepat 
+CMD ["node", "apps/api/dist/src/index.js"]
