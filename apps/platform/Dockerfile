@@ -25,20 +25,23 @@ RUN cd apps/api && pnpm prisma generate
 RUN pnpm --filter platform build
 
 FROM base AS runner
-WORKDIR /app
+WORKDIR /app/apps/platform
 
 ENV NODE_ENV=production
 ENV PORT=3000
 
 # Copy necessary files from the builder (flattened node_modules)
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/packages ./packages
-COPY --from=builder /app/apps/platform/node_modules ./apps/platform/node_modules
-COPY --from=builder /app/apps/platform/dist ./apps/platform/dist
-COPY --from=builder /app/apps/platform/package.json ./apps/platform/package.json
+# Kita salin root node_modules ke atas (relatif terhadap /app/apps/platform)
+COPY --from=builder /app/package.json ../../package.json
+COPY --from=builder /app/node_modules ../../node_modules
+COPY --from=builder /app/packages ../../packages
+
+# Salin isi dari apps/platform itu sendiri ke lokasi saat ini (.)
+COPY --from=builder /app/apps/platform/node_modules ./node_modules
+COPY --from=builder /app/apps/platform/dist ./dist
+COPY --from=builder /app/apps/platform/package.json ./package.json
 
 EXPOSE 3000
 
-# Jalankan preview dari folder platform
-CMD ["npm", "run", "preview", "--prefix", "apps/platform", "--", "--host", "0.0.0.0", "--port", "3000"]
+# Jalankan preview langsung di folder apps/platform
+CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "3000"]
