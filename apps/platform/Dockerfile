@@ -25,23 +25,21 @@ RUN cd apps/api && pnpm prisma generate
 RUN pnpm --filter platform build
 
 FROM base AS runner
-WORKDIR /app/apps/platform
+WORKDIR /app
 
 ENV NODE_ENV=production
 ENV PORT=3000
 
-# Copy necessary files from the builder (flattened node_modules)
-# Kita salin root node_modules ke atas (relatif terhadap /app/apps/platform)
-COPY --from=builder /app/package.json ../../package.json
-COPY --from=builder /app/node_modules ../../node_modules
-COPY --from=builder /app/packages ../../packages
+# Salin konfigurasi root dan depepndensi yang sudah flat (hoisted)
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/packages ./packages
 
-# Salin isi dari apps/platform itu sendiri ke lokasi saat ini (.)
-COPY --from=builder /app/apps/platform/node_modules ./node_modules
-COPY --from=builder /app/apps/platform/dist ./dist
-COPY --from=builder /app/apps/platform/package.json ./package.json
+# Salin sub-folder platform (termasuk .output atau dist)
+COPY --from=builder /app/apps/platform ./apps/platform
 
 EXPOSE 3000
 
-# Jalankan preview langsung di folder apps/platform
-CMD ["npm", "run", "preview", "--", "--host", "0.0.0.0", "--port", "3000"]
+# TanStack Start (SSR) biasanya menghasilkan output di folder .output/server/index.mjs
+# Kita coba jalankan server-nya langsung jika ada, atau fallback ke preview jika file tidak ditemukan.
+CMD ["sh", "-c", "if [ -f apps/platform/.output/server/index.mjs ]; then node apps/platform/.output/server/index.mjs; else npm run preview --prefix apps/platform -- --host 0.0.0.0 --port 3000; fi"]
