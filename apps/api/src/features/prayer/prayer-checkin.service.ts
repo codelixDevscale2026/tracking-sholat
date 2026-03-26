@@ -1,5 +1,6 @@
 import { addMinutes, differenceInMinutes } from "date-fns";
-import type { PrayerStatus } from "../generated/prisma/index.js";
+// Karena terkadang Prisma client tidak mengekspor tipe Enum dengan baik di ESM, kita definisikan manual agar build stabil
+export type PrayerStatus = "ON_TIME" | "PERFORMED" | "MISSED";
 
 export interface CheckInResult {
 	status: PrayerStatus;
