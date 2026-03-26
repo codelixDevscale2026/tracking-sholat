@@ -7,7 +7,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
       POSTGRES_DB: ${POSTGRES_DB:-database}
     ports:
-      - "5435:5432"
+      - "5435:5432" # Sesuai perubahan port agar tidak konflik di VPS
     volumes:
       - db_data:/var/lib/postgresql/data
     healthcheck:
@@ -17,12 +17,12 @@ services:
       retries: 5
 
   api:
-    build:
-      context: .
-      dockerfile: apps/api/Dockerfile
+    # Menggunakan Image dari GHCR (sudah di-build di GitHub Actions)
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER}/tracking-sholat-api:latest
     restart: always
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-password}@db:5432/${POSTGRES_DB:-database}?schema=public
+      - JWT_SECRET=${JWT_SECRET}
     ports:
       - "8000:8000"
     depends_on:
@@ -30,12 +30,11 @@ services:
         condition: service_healthy
 
   platform:
-    build:
-      context: .
-      dockerfile: apps/platform/Dockerfile
+    # Menggunakan Image dari GHCR (sudah di-build di GitHub Actions)
+    image: ghcr.io/${GITHUB_REPOSITORY_OWNER}/tracking-sholat-platform:latest
     restart: always
     environment:
-      - VITE_API_BASE_URL=http://api:8000
+      - VITE_API_BASE_URL=https://api.sholat.anaslabs.my.id
     ports:
       - "3000:3000"
     depends_on:
