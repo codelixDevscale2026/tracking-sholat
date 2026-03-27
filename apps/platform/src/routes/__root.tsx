@@ -3,9 +3,14 @@ import type { QueryClient } from "@tanstack/react-query";
 import {
 	createRootRouteWithContext,
 	HeadContent,
+	Outlet,
+	redirect,
 	Scripts,
+	useLocation,
+	useNavigate,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtoolsPanel } from "@tanstack/react-router-devtools";
+import { useEffect } from "react";
 import { Toaster } from "sonner";
 import TanStackQueryDevtools from "../integrations/tanstack-query/devtools";
 import TanStackQueryProvider from "../integrations/tanstack-query/root-provider";
@@ -15,7 +20,23 @@ interface MyRouterContext {
 	queryClient: QueryClient;
 }
 
+// Daftar route yang boleh diakses tanpa login
+const PUBLIC_ROUTES = ["/login", "/register"];
+
 export const Route = createRootRouteWithContext<MyRouterContext>()({
+	beforeLoad: ({ location }) => {
+		// Lewati pengecekan di server (SSR) karena tidak ada localStorage
+		if (typeof window === "undefined") return;
+
+		// Lewati pengecekan untuk halaman publik
+		if (PUBLIC_ROUTES.includes(location.pathname)) return;
+
+		// Redirect ke login jika belum punya token
+		const token = localStorage.getItem("auth_token");
+		if (!token) {
+			throw redirect({ to: "/login" });
+		}
+	},
 	head: () => ({
 		meta: [
 			{
@@ -26,7 +47,7 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 				content: "width=device-width, initial-scale=1",
 			},
 			{
-				title: "TanStack Start Starter",
+				title: "Tracking Sholat",
 			},
 		],
 		links: [
@@ -50,7 +71,34 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 		],
 	}),
 	shellComponent: RootDocument,
+	component: RootComponent,
 });
+
+// Komponen ini berjalan di client-side saat hydration
+// untuk menangkap kasus SSR di mana beforeLoad dilewati
+function AuthGuard({ children }: { children: React.ReactNode }) {
+	const location = useLocation();
+	const navigate = useNavigate();
+
+	useEffect(() => {
+		if (PUBLIC_ROUTES.includes(location.pathname)) return;
+
+		const token = localStorage.getItem("auth_token");
+		if (!token) {
+			navigate({ to: "/login", replace: true });
+		}
+	}, [location.pathname, navigate]);
+
+	return <>{children}</>;
+}
+
+function RootComponent() {
+	return (
+		<AuthGuard>
+			<Outlet />
+		</AuthGuard>
+	);
+}
 
 function RootDocument({ children }: { children: React.ReactNode }) {
 	return (
