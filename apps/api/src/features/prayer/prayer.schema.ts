@@ -56,3 +56,47 @@ export const PrayerTodayResponseSchema = z.object({
 
 export type PrayerSchedule = z.infer<typeof PrayerScheduleSchema>;
 export type PrayerTodayResponse = z.infer<typeof PrayerTodayResponseSchema>;
+
+// --- History Schemas ---
+
+export const GetHistoryQuerySchema = z.object({
+	period: z.enum(["daily", "weekly", "monthly"]).default("daily"),
+	date: z
+		.string()
+		.regex(/^\d{4}-\d{2}-\d{2}$/)
+		.optional(),
+	page: z.coerce.number().int().positive().default(1),
+	per_page: z.coerce.number().int().positive().default(7),
+});
+
+export type GetHistoryQuery = z.infer<typeof GetHistoryQuerySchema>;
+
+export const HistoryPrayerItemSchema = z.object({
+	prayer_name: PrayerNameEnum,
+	adzan_time: z.string(),
+	buffer_limit: z.string(),
+	check_in_at: z.string().nullable(),
+	status: z.enum(["on-time", "performed", "missed", "late", "early"]),
+	response_time_minutes: z.number().nullable(),
+});
+
+export const HistoryDayGroupSchema = z.object({
+	date: z.string(),
+	total_completed: z.number(),
+	total_prayers: z.number(),
+	prayers: z.array(HistoryPrayerItemSchema),
+});
+
+export const HistoryResponseSchema = z.object({
+	period: z.string(),
+	pagination: z.object({
+		current_page: z.number(),
+		per_page: z.number(),
+		total_pages: z.number(),
+	}),
+	data: z.array(HistoryDayGroupSchema),
+});
+
+export type HistoryResponse = z.infer<typeof HistoryResponseSchema>;
+export type HistoryDayGroup = z.infer<typeof HistoryDayGroupSchema>;
+export type HistoryPrayerItem = z.infer<typeof HistoryPrayerItemSchema>;

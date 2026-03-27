@@ -10,6 +10,7 @@ import {
 	parseHHMM,
 	zonedDateTimeToUtc,
 } from "../../utils/timezone.js";
+import { getPrayerHistory } from "./history.service.js";
 import type { CheckInResponse, PrayerTodayResponse } from "./prayer.schema.js";
 import {
 	fetchFromAlAdhan,
@@ -395,4 +396,14 @@ export async function checkInPrayer(options: {
 		status: prayerLog.status as PrayerStatus,
 		responseTimeMinutes: prayerLog.responseTimeMinutes ?? 0,
 	};
+}
+
+export async function getHistory(options: {
+	userId: number;
+	period: string;
+	date?: string;
+	page: number;
+	perPage: number;
+}) {
+	return getPrayerHistory(options);
 }

@@ -84,6 +84,7 @@ model DailyPrayerSchedule {
   longitude          Decimal  @db.Decimal(9, 6)
   fetchedAt          DateTime @default(now()) @map("fetched_at")
   user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  prayerLog          PrayerLog?
 
   @@unique([userId, date, prayerName])
   @@map("daily_prayer_schedules")
@@ -101,6 +102,7 @@ model PrayerLog {
   responseTimeMinutes   Int?         @map("response_time_minutes")
   createdAt             DateTime     @default(now()) @map("created_at")
   user                  User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  DailyPrayerSchedule   DailyPrayerSchedule? @relation(fields: [userId, date, prayerName], references: [userId, date, prayerName])
 
   @@unique([userId, date, prayerName])
   @@map("prayer_logs")
