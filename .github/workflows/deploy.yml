@@ -105,7 +105,7 @@ jobs:
             # 5. Tunggu database siap, lalu jalankan migrasi Prisma
             echo "Menunggu database siap..."
             sleep 10
-            docker compose exec -T api npx prisma migrate deploy --schema=apps/api/prisma/schema.prisma
+            docker compose exec -T api sh -c "cd apps/api && npx prisma migrate deploy"
             
             # 6. Bersihkan image lama
             docker image prune -f
