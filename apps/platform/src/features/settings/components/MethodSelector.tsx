@@ -1,6 +1,6 @@
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import type { CalculationMethod } from "../settings.types";
+import type { CalculationMethod } from "../types/settings.types";
 
 interface MethodSelectorProps {
 	value: string;
