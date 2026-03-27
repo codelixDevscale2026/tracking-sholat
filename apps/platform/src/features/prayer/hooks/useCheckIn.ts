@@ -21,6 +21,10 @@ export function useCheckIn() {
 			queryClient.invalidateQueries({
 				queryKey: ["prayer-schedule", "today", variables.userId],
 			});
+			// Invalidate stats cache so Statistics Dashboard updates automatically
+			queryClient.invalidateQueries({
+				queryKey: ["stats"],
+			});
 		},
 		onError: (error: Error) => {
 			const errorMessage = error.message;
