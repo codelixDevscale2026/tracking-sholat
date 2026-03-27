@@ -102,5 +102,10 @@ jobs:
             # Paksa Docker hanya PULL, jangan BUILD di VPS
             docker compose up -d --force-recreate --no-build
             
-            # 5. Bersihkan image lama
+            # 5. Tunggu database siap, lalu jalankan migrasi Prisma
+            echo "Menunggu database siap..."
+            sleep 10
+            docker compose exec -T api npx prisma migrate deploy --schema=prisma/schema.prisma
+            
+            # 6. Bersihkan image lama
             docker image prune -f
