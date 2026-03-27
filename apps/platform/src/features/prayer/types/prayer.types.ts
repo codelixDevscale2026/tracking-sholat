@@ -45,3 +45,29 @@ export interface UseTodayScheduleOptions {
 	enabled?: boolean;
 	refetchInterval?: number;
 }
+
+export interface HistoryPrayerItem {
+	prayer_name: string;
+	adzan_time: string;
+	buffer_limit: string;
+	check_in_at: string | null;
+	status: string;
+	response_time_minutes: number | null;
+}
+
+export interface HistoryDayGroup {
+	date: string;
+	total_completed: number;
+	total_prayers: number;
+	prayers: HistoryPrayerItem[];
+}
+
+export interface PrayerHistoryResponse {
+	period: string;
+	pagination: {
+		current_page: number;
+		per_page: number;
+		total_pages: number;
+	};
+	data: HistoryDayGroup[];
+}
