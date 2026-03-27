@@ -4,8 +4,8 @@ import { Apple, ArrowRight, Chrome, Eye, Lock, Mail } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { type LoginFormValues, loginSchema } from "../auth.types";
 import { useAuthFeature } from "../hooks/useAuthFeature";
+import { type LoginFormValues, loginSchema } from "../types/auth.types";
 
 export function LoginForm() {
 	const { login } = useAuthFeature();
