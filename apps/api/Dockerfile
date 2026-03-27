@@ -39,6 +39,8 @@ COPY --from=builder /app/apps/api/node_modules ./apps/api/node_modules
 COPY --from=builder /app/apps/api/dist ./apps/api/dist
 COPY --from=builder /app/apps/api/package.json ./apps/api/package.json
 COPY --from=builder /app/apps/api/prisma ./apps/api/prisma
+COPY --from=builder /app/apps/api/prisma.config.ts ./apps/api/prisma.config.ts
+COPY --from=builder /app/apps/api/tsconfig.json ./apps/api/tsconfig.json
 
 EXPOSE 8000
 
