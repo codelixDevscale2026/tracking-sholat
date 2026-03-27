@@ -4,8 +4,8 @@ import { Apple, ArrowRight, Chrome, Eye, Lock, Mail, User } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
-import { type RegisterFormValues, registerSchema } from "../auth.types";
 import { useAuthFeature } from "../hooks/useAuthFeature";
+import { type RegisterFormValues, registerSchema } from "../types/auth.types";
 
 export function RegisterForm() {
 	const { register: registerAction } = useAuthFeature();

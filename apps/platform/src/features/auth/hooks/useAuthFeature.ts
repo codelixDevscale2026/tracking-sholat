@@ -1,18 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { api } from "@/utils/api";
-import type { LoginFormValues, RegisterFormValues, User } from "../auth.types";
-
-interface AuthResponse {
-	user: User;
-	token: string;
-	message?: string;
-}
-
-interface ErrorResponse {
-	message: string;
-}
+import { fetchMe, login, logout, register } from "../api/auth-api";
+import type { LoginFormValues, RegisterFormValues } from "../types/auth.types";
 
 export function useAuthFeature() {
 	const queryClient = useQueryClient();
@@ -20,20 +10,7 @@ export function useAuthFeature() {
 
 	const userQuery = useQuery({
 		queryKey: ["auth", "me"],
-		queryFn: async () => {
-			const token = localStorage.getItem("auth_token");
-			const res = await api.api.v1.auth.me.$get(
-				{},
-				{
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-				},
-			);
-			if (!res.ok) throw new Error("Not authenticated");
-			const data = (await res.json()) as unknown as { user: User };
-			return data.user;
-		},
+		queryFn: fetchMe,
 		retry: false,
 		staleTime: 1000 * 60 * 5, // 5 minutes
 		enabled:
@@ -41,17 +18,7 @@ export function useAuthFeature() {
 	});
 
 	const loginMutation = useMutation({
-		mutationFn: async (values: LoginFormValues) => {
-			const res = await api.api.v1.auth.login.$post({
-				json: values,
-			});
-			const data = await res.json();
-			if (!res.ok) {
-				const error = data as unknown as ErrorResponse;
-				throw new Error(error.message || "Login failed");
-			}
-			return data as unknown as AuthResponse;
-		},
+		mutationFn: (values: LoginFormValues) => login(values),
 		onSuccess: (data) => {
 			localStorage.setItem("auth_token", data.token);
 			queryClient.setQueryData(["auth", "me"], data.user);
@@ -64,17 +31,7 @@ export function useAuthFeature() {
 	});
 
 	const registerMutation = useMutation({
-		mutationFn: async (values: RegisterFormValues) => {
-			const res = await api.api.v1.auth.register.$post({
-				json: values,
-			});
-			const data = await res.json();
-			if (!res.ok) {
-				const error = data as unknown as ErrorResponse;
-				throw new Error(error.message || "Registration failed");
-			}
-			return data as unknown as AuthResponse;
-		},
+		mutationFn: (values: RegisterFormValues) => register(values),
 		onSuccess: (data) => {
 			localStorage.setItem("auth_token", data.token);
 			queryClient.setQueryData(["auth", "me"], data.user);
@@ -87,18 +44,7 @@ export function useAuthFeature() {
 	});
 
 	const logoutMutation = useMutation({
-		mutationFn: async () => {
-			const res = await api.api.v1.auth.logout.$post(
-				{},
-				{
-					headers: {
-						Authorization: `Bearer ${localStorage.getItem("auth_token")}`,
-					},
-				},
-			);
-			if (!res.ok) throw new Error("Logout failed");
-			return res.json();
-		},
+		mutationFn: logout,
 		onSettled: () => {
 			localStorage.removeItem("auth_token");
 			queryClient.setQueryData(["auth", "me"], null);
