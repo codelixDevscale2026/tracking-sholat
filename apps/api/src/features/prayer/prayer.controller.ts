@@ -1,4 +1,4 @@
-import { addMinutes, differenceInSeconds } from "date-fns";
+import { addDays, addMinutes, differenceInSeconds } from "date-fns";
 import { HTTPException } from "hono/http-exception";
 import type {
 	DailyPrayerSchedule,
@@ -67,6 +67,107 @@ function getPrayerStatus(options: {
 	return "pending";
 }
 
+async function ensureDailySchedule(options: {
+	userId: number;
+	date: Date;
+	ymd: { year: number; month: number; day: number };
+	timeZone: string;
+	calculationMethod: string;
+	cityName: string;
+	latitude: number;
+	longitude: number;
+}): Promise<DailyPrayerSchedule[]> {
+	const {
+		userId,
+		date,
+		ymd,
+		timeZone,
+		calculationMethod,
+		cityName,
+		latitude,
+		longitude,
+	} = options;
+
+	const cached = await prisma.dailyPrayerSchedule.findMany({
+		where: {
+			userId,
+			date,
+		},
+	});
+
+	const hasAllPrayers = PRAYER_ORDER.every((p) =>
+		cached.some((s) => s.prayerName === p),
+	);
+
+	const isCacheCompatible = cached.every((s) => {
+		if (s.calculationMethod !== calculationMethod) return false;
+		const lat = toNumberDecimal(s.latitude);
+		const lon = toNumberDecimal(s.longitude);
+		if (lat == null || lon == null) return false;
+		return Math.abs(lat - latitude) < 1e-6 && Math.abs(lon - longitude) < 1e-6;
+	});
+
+	if (hasAllPrayers && isCacheCompatible) {
+		return cached;
+	}
+
+	let provider: ProviderResult;
+	try {
+		provider = await fetchFromAlAdhan({
+			date: ymd,
+			latitude,
+			longitude,
+			method: calculationMethod,
+		});
+	} catch (_) {
+		provider = await fetchFromMyQuran({
+			date: ymd,
+			cityName,
+			method: calculationMethod,
+		});
+	}
+
+	const upserts = PRAYER_ORDER.map(async (prayerName) => {
+		const { hour, minute } = parseHHMM(provider.timings[prayerName]);
+		const utc = zonedDateTimeToUtc({
+			year: ymd.year,
+			month: ymd.month,
+			day: ymd.day,
+			hour,
+			minute,
+			timeZone,
+		});
+
+		return prisma.dailyPrayerSchedule.upsert({
+			where: {
+				userId_date_prayerName: {
+					userId,
+					date,
+					prayerName,
+				},
+			},
+			create: {
+				userId,
+				date,
+				prayerName,
+				scheduledAdzanTime: utc,
+				calculationMethod,
+				latitude,
+				longitude,
+			},
+			update: {
+				scheduledAdzanTime: utc,
+				calculationMethod,
+				latitude,
+				longitude,
+				fetchedAt: new Date(),
+			},
+		});
+	});
+
+	return Promise.all(upserts);
+}
+
 export async function getTodaySchedule(options: {
 	userId: number;
 }): Promise<PrayerTodayResponse> {
@@ -103,85 +204,16 @@ export async function getTodaySchedule(options: {
 	// date column is DATE without time; store as UTC midnight of that YMD for stable equality.
 	const scheduleDate = new Date(Date.UTC(ymd.year, ymd.month - 1, ymd.day));
 
-	const cached = await prisma.dailyPrayerSchedule.findMany({
-		where: {
-			userId,
-			date: scheduleDate,
-		},
+	const schedules = await ensureDailySchedule({
+		userId,
+		date: scheduleDate,
+		ymd,
+		timeZone,
+		calculationMethod,
+		cityName,
+		latitude,
+		longitude,
 	});
-
-	let schedules: DailyPrayerSchedule[] = cached;
-
-	const hasAllPrayers = PRAYER_ORDER.every((p) =>
-		schedules.some((s) => s.prayerName === p),
-	);
-
-	const isCacheCompatible = schedules.every((s) => {
-		if (s.calculationMethod !== calculationMethod) return false;
-		const lat = toNumberDecimal(s.latitude);
-		const lon = toNumberDecimal(s.longitude);
-		if (lat == null || lon == null) return false;
-		// allow tiny float/decimal differences
-		return Math.abs(lat - latitude) < 1e-6 && Math.abs(lon - longitude) < 1e-6;
-	});
-
-	if (!hasAllPrayers || !isCacheCompatible) {
-		let provider: ProviderResult;
-		try {
-			provider = await fetchFromAlAdhan({
-				date: ymd,
-				latitude,
-				longitude,
-				method: calculationMethod,
-			});
-		} catch (_) {
-			provider = await fetchFromMyQuran({
-				date: ymd,
-				cityName,
-				method: calculationMethod,
-			});
-		}
-
-		const upserts = PRAYER_ORDER.map(async (prayerName) => {
-			const { hour, minute } = parseHHMM(provider.timings[prayerName]);
-			const utc = zonedDateTimeToUtc({
-				year: ymd.year,
-				month: ymd.month,
-				day: ymd.day,
-				hour,
-				minute,
-				timeZone,
-			});
-
-			return prisma.dailyPrayerSchedule.upsert({
-				where: {
-					userId_date_prayerName: {
-						userId,
-						date: scheduleDate,
-						prayerName,
-					},
-				},
-				create: {
-					userId,
-					date: scheduleDate,
-					prayerName,
-					scheduledAdzanTime: utc,
-					calculationMethod,
-					latitude,
-					longitude,
-				},
-				update: {
-					scheduledAdzanTime: utc,
-					calculationMethod,
-					latitude,
-					longitude,
-					fetchedAt: new Date(),
-				},
-			});
-		});
-
-		schedules = await Promise.all(upserts);
-	}
 
 	const logs = await prisma.prayerLog.findMany({
 		where: {
@@ -189,6 +221,47 @@ export async function getTodaySchedule(options: {
 			date: scheduleDate,
 		},
 	});
+
+	// Find today's next prayer
+	const nextToday = schedules
+		.map((s) => ({
+			prayerName: s.prayerName,
+			adzan: s.scheduledAdzanTime,
+		}))
+		.find((p) => p.adzan.getTime() > now.getTime());
+
+	let finalNextPrayer: { prayerName: string; adzan: Date };
+
+	if (nextToday) {
+		finalNextPrayer = nextToday;
+	} else {
+		// All today's prayers finished, get tomorrow's Subuh
+		const tomorrow = addDays(now, 1);
+		const ymdTomorrow = getYMDInTimeZone(tomorrow, timeZone);
+		const scheduleDateTomorrow = new Date(
+			Date.UTC(ymdTomorrow.year, ymdTomorrow.month - 1, ymdTomorrow.day),
+		);
+
+		const tomorrowSchedules = await ensureDailySchedule({
+			userId,
+			date: scheduleDateTomorrow,
+			ymd: ymdTomorrow,
+			timeZone,
+			calculationMethod,
+			cityName,
+			latitude,
+			longitude,
+		});
+
+		const nextSubuh = tomorrowSchedules.find((s) => s.prayerName === "subuh");
+		if (!nextSubuh) {
+			throw new Error("Failed to fetch tomorrow's Subuh");
+		}
+		finalNextPrayer = {
+			prayerName: "subuh",
+			adzan: nextSubuh.scheduledAdzanTime,
+		};
+	}
 
 	// Build map of prayer schedules for easy lookup
 	const scheduleMap = new Map(schedules.map((s) => [s.prayerName, s]));
@@ -199,11 +272,11 @@ export async function getTodaySchedule(options: {
 			throw new Error(`Missing schedule for prayer ${prayerName}`);
 		}
 
-		// Get next prayer's adzan time (if exists)
-		const nextPrayerName = PRAYER_ORDER[index + 1];
-		const nextAdzan = nextPrayerName
-			? scheduleMap.get(nextPrayerName)?.scheduledAdzanTime
-			: undefined;
+		// Get next prayer's adzan time (today or tomorrow's Subuh)
+		const nextInOrder = PRAYER_ORDER[index + 1];
+		const nextAdzan = nextInOrder
+			? scheduleMap.get(nextInOrder)?.scheduledAdzanTime
+			: finalNextPrayer.adzan;
 
 		const log = logs.find((l) => l.prayerName === prayerName) ?? null;
 		const status = getPrayerStatus({
@@ -221,24 +294,17 @@ export async function getTodaySchedule(options: {
 			status,
 			checkInAt: log?.checkInTimestamp?.toISOString() ?? null,
 			responseTimeMinutes: log?.responseTimeMinutes ?? null,
-			isChecked: log?.checkInTimestamp !== null,
+			isChecked: !!log?.checkInTimestamp,
 		};
 	});
 
-	// Next prayer and countdown
-	const next = normalized
-		.map((s) => ({
-			prayerName: s.prayerName,
-			adzan: new Date(s.scheduledAdzanTime),
-		}))
-		.find((p) => p.adzan.getTime() > now.getTime());
-
-	const nextPrayer = next
-		? {
-				prayerName: next.prayerName,
-				countdownSeconds: Math.max(0, differenceInSeconds(next.adzan, now)),
-			}
-		: undefined;
+	const nextPrayer = {
+		prayerName: finalNextPrayer.prayerName,
+		countdownSeconds: Math.max(
+			0,
+			differenceInSeconds(finalNextPrayer.adzan, now),
+		),
+	};
 
 	return {
 		cityName,

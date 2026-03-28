@@ -83,7 +83,7 @@ export const schedulerApp = new Hono().post("/auto-missed", async (c) => {
 			continue;
 		}
 
-		const newLog = await prisma.prayerLog.create({
+		const _newLog = await prisma.prayerLog.create({
 			data: {
 				userId: users[i].id,
 				prayerName: prevShalahName,
