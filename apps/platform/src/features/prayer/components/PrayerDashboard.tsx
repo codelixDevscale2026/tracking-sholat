@@ -1,4 +1,4 @@
-import { Bell, Calendar, MapPin } from "lucide-react";
+import { Bell } from "lucide-react";
 import { useEffect } from "react";
 import { MobileNav } from "@/components/layout/MobileNav";
 import { useAuthFeature } from "@/features/auth/hooks/useAuthFeature";
@@ -56,14 +56,19 @@ export function PrayerDashboard() {
 			{/* Header */}
 			<header className="p-4 flex items-center justify-between sticky top-0 bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md z-30 border-b border-zinc-100 dark:border-zinc-800">
 				<div className="flex items-center gap-3">
-					<div className="bg-primary/20 p-2 rounded-lg text-primary">
-						<Calendar className="w-5 h-5" />
+					<div className="w-10 h-10 flex items-center justify-center">
+						<img
+							src="/icons/icon-only.png"
+							className="w-full h-full object-contain"
+							alt="Sholatify"
+						/>
 					</div>
-					<div>
-						<h1 className="text-lg font-bold tracking-tight">Jadwal Sholat</h1>
-						<div className="flex items-center gap-1 text-zinc-500 dark:text-zinc-400">
-							<MapPin className="w-3 h-3" />
-							<p className="text-[10px] font-medium uppercase tracking-wider">
+					<div className="flex flex-col">
+						<h1 className="text-sm font-bold tracking-tight text-zinc-900 dark:text-zinc-50">
+							Sholatify
+						</h1>
+						<div className="flex items-center gap-1 text-zinc-500 dark:text-zinc-400 -mt-0.5">
+							<p className="text-[9px] font-bold uppercase tracking-widest">
 								{data?.cityName || settings?.cityName || "Loading..."}
 							</p>
 						</div>

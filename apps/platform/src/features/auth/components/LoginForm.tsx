@@ -27,21 +27,14 @@ export function LoginForm() {
 			<div className="bg-white dark:bg-zinc-900 rounded-3xl shadow-xl shadow-emerald-500/5 p-8 border border-emerald-500/10">
 				{/* Brand Header */}
 				<div className="flex flex-col items-center mb-10 text-center">
-					<div className="w-20 h-20 bg-emerald-500/10 rounded-full flex items-center justify-center mb-4 transition-transform hover:scale-105 duration-300">
-						<svg
-							className="w-10 h-10 text-emerald-600 dark:text-emerald-400"
-							viewBox="0 0 24 24"
-							fill="currentColor"
-							role="img"
-						>
-							<title>Sholat Tracker Logo</title>
-							<path d="M12,2L4.5,11V22H19.5V11L12,2M12,4.4L17.5,11H6.5L12,4.4M12,12A3,3 0 0,1 15,15A3,3 0 0,1 12,18A3,3 0 0,1 9,15A3,3 0 0,1 12,12M8,20V12.5L12,17.3L16,12.5V20H8Z" />
-						</svg>
+					<div className="w-24 h-24 mb-2 transition-transform hover:scale-105 duration-300">
+						<img
+							src="/icons/logo-vertical.png"
+							className="w-full h-full object-contain"
+							alt="Sholatify"
+						/>
 					</div>
-					<h1 className="text-3xl font-extrabold tracking-tight text-zinc-900 dark:text-zinc-50">
-						Sholat Tracker
-					</h1>
-					<p className="text-zinc-500 dark:text-zinc-400 mt-2 text-sm leading-relaxed max-w-[280px]">
+					<p className="text-zinc-500 dark:text-zinc-400 mt-0 text-sm leading-relaxed max-w-[280px]">
 						Track your daily prayers and stay consistent with your faith.
 					</p>
 				</div>
