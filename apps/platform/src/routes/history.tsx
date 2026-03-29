@@ -33,7 +33,9 @@ function HistoryPage() {
 	});
 
 	// Handle data accumulation
-	const [allHistory, setAllHistory] = useState<any[]>([]);
+	const [allHistory, setAllHistory] = useState<
+		Array<React.ComponentProps<typeof HistoryDayGroup>["group"]>
+	>([]);
 
 	// Reset if period or date changes
 	useEffect(() => {
@@ -106,7 +108,9 @@ function HistoryPage() {
 
 				<Tabs
 					value={period}
-					onValueChange={(v: string) => setPeriod(v as any)}
+					onValueChange={(v: string) =>
+						setPeriod(v as "daily" | "weekly" | "monthly")
+					}
 					className="w-full"
 				>
 					<TabsList className="flex px-4 gap-8 justify-around bg-transparent h-auto p-0 rounded-none border-b-0">

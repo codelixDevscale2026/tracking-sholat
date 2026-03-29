@@ -20,14 +20,21 @@ export async function fetchTodaySchedule(
 	);
 
 	if (!response.ok) {
-		const errorData = (await response.json().catch(() => ({}))) as any;
+		const errorData = (await response.json().catch(() => ({}))) as {
+			message?: string;
+			error?: string;
+		};
 		throw new Error(
 			errorData.message ||
 				`Failed to fetch prayer schedule: ${response.statusText}`,
 		);
 	}
 
-	const data = (await response.json()) as any;
+	const data = (await response.json()) as {
+		success?: boolean;
+		data: PrayerTodayResponse;
+		message?: string;
+	};
 
 	if (!data.success) {
 		throw new Error(data.message || "Failed to fetch prayer schedule");
@@ -58,13 +65,20 @@ export async function fetchPrayerHistory(params: {
 	);
 
 	if (!response.ok) {
-		const errorData = (await response.json().catch(() => ({}))) as any;
+		const errorData = (await response.json().catch(() => ({}))) as {
+			message?: string;
+			error?: string;
+		};
 		throw new Error(
 			errorData.message || `Failed to fetch history: ${response.statusText}`,
 		);
 	}
 
-	const data = (await response.json()) as any;
+	const data = (await response.json()) as {
+		success?: boolean;
+		data: PrayerHistoryResponse;
+		message?: string;
+	};
 
 	if (!data.success) {
 		throw new Error(data.message || "Failed to fetch history");
@@ -87,13 +101,19 @@ export async function checkInPrayer(
 	);
 
 	if (!response.ok) {
-		const errorData = (await response.json().catch(() => ({}))) as any;
+		const errorData = (await response.json().catch(() => ({}))) as {
+			error?: { code?: string; message?: string };
+		};
 		const errorCode = errorData.error?.code || "UNKNOWN_ERROR";
 		const errorMessage = errorData.error?.message || response.statusText;
 		throw new Error(`${errorCode}: ${errorMessage}`);
 	}
 
-	const data = (await response.json()) as any;
+	const data = (await response.json()) as {
+		success?: boolean;
+		data: CheckInResponse;
+		message?: string;
+	};
 
 	if (!data.success) {
 		throw new Error(data.message || "Failed to check in");

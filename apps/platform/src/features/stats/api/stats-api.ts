@@ -12,10 +12,10 @@ export async function fetchStatsSummary(
 	date?: string,
 ): Promise<StatsSummaryResponse> {
 	const token = localStorage.getItem("auth_token");
-	const response = await api.api.v1.stats.summary.$get({
-		query: { period, date },
-		header: token ? { Authorization: `Bearer ${token}` } : undefined,
-	} as any);
+	const response = await api.api.v1.stats.summary.$get(
+		{ query: { period, date } },
+		{ headers: token ? { Authorization: `Bearer ${token}` } : undefined },
+	);
 
 	if (!response.ok) {
 		const errorData = (await response.json().catch(() => ({}))) as {

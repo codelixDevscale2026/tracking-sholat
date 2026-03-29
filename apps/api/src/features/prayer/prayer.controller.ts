@@ -113,16 +113,18 @@ async function ensureDailySchedule(options: {
 
 	let provider: ProviderResult;
 	try {
+		// Prioritaskan API MyQuran (Data resmi Kemenag MABIMS)
+		provider = await fetchFromMyQuran({
+			date: ymd,
+			cityName,
+			method: calculationMethod === "mwl" ? "kemenag" : calculationMethod,
+		});
+	} catch (_) {
+		// Fallback ke AlAdhan jika kota tidak dikenali atau berada di luar Indonesia
 		provider = await fetchFromAlAdhan({
 			date: ymd,
 			latitude,
 			longitude,
-			method: calculationMethod,
-		});
-	} catch (_) {
-		provider = await fetchFromMyQuran({
-			date: ymd,
-			cityName,
 			method: calculationMethod,
 		});
 	}
@@ -192,7 +194,7 @@ export async function getTodaySchedule(options: {
 
 	// Defaults so the endpoint works before settings UI/seed exists.
 	const timeZone = settings?.timezone || "Asia/Jakarta";
-	const calculationMethod = settings?.calculationMethod || "mwl";
+	const calculationMethod = settings?.calculationMethod || "kemenag";
 	const bufferMinutes = settings?.globalBufferMinutes ?? 20;
 	const cityName = settings?.cityName || "KOTA JAKARTA";
 

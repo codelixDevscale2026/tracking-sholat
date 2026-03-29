@@ -109,7 +109,7 @@ async function loadMyQuranCities() {
 		);
 	}
 
-	const json = (await res.json()) as any;
+	const json = (await res.json()) as { data?: unknown };
 	if (!json?.data || !Array.isArray(json.data)) {
 		throw new Error("myQuran cities response missing data");
 	}
@@ -166,7 +166,9 @@ export async function fetchFromMyQuran(options: {
 		);
 	}
 
-	const json = (await res.json()) as any;
+	const json = (await res.json()) as {
+		data?: { lokasi?: string; jadwal?: Record<string, string> };
+	};
 	const jadwal = json?.data?.jadwal;
 	if (!jadwal) {
 		throw new Error("myQuran response missing jadwal");

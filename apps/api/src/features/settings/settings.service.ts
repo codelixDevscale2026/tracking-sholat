@@ -13,7 +13,7 @@ export const SettingsService = {
 					userId,
 					globalBufferMinutes: 20,
 					timezone: "Asia/Jakarta",
-					calculationMethod: "mwl",
+					calculationMethod: "kemenag",
 					autoDetectLocation: true,
 				},
 			});

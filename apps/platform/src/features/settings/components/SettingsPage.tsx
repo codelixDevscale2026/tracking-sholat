@@ -79,7 +79,7 @@ export function SettingsPage() {
 						<div className="flex flex-col items-start text-left">
 							<p className="text-sm font-bold">Calculation Method</p>
 							<p className="text-zinc-500 dark:text-zinc-400 text-[10px] font-medium tracking-wide">
-								{settings?.calculationMethod?.toUpperCase() ?? "MWL"}
+								{settings?.calculationMethod?.toUpperCase() ?? "KEMENAG"}
 							</p>
 						</div>
 						<ChevronRight className="w-5 h-5 text-zinc-300 group-hover:text-emerald-500 transition-colors" />

@@ -23,6 +23,7 @@ export function MethodSelector({
 				{methods.map((method) => (
 					<Label
 						key={method.value}
+						htmlFor={`method-${method.value}`}
 						className={`
 							flex items-center justify-between p-5 rounded-3xl border transition-all cursor-pointer
 							${
@@ -38,7 +39,11 @@ export function MethodSelector({
 								{method.value}
 							</span>
 						</div>
-						<RadioGroupItem value={method.value} className="sr-only" />
+						<RadioGroupItem
+							value={method.value}
+							id={`method-${method.value}`}
+							className="sr-only"
+						/>
 						{value === method.value && (
 							<div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center">
 								<div className="w-2 h-2 rounded-full bg-white" />
