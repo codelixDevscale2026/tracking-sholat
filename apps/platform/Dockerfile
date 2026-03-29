@@ -22,7 +22,7 @@ RUN pnpm install --frozen-lockfile
 RUN cd apps/api && pnpm prisma generate
 
 # Terima build arg untuk API URL
-ARG VITE_API_BASE_URL=http://103.172.204.124:8001
+ARG VITE_API_BASE_URL=https://api.sholatify.anaslabs.my.id
 ENV VITE_API_BASE_URL=${VITE_API_BASE_URL}
 
 # Build the Frontend platform
