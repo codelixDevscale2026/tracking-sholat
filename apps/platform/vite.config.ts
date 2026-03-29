@@ -13,6 +13,9 @@ const config = defineConfig({
 		tanstackStart(),
 		viteReact(),
 	],
+	preview: {
+		allowedHosts: ["sholatify.anaslabs.my.id"],
+	},
 });
 
 export default config;
