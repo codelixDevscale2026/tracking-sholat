@@ -47,7 +47,12 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
 				content: "width=device-width, initial-scale=1",
 			},
 			{
-				title: "Tracking Sholat",
+				title: "Sholatify",
+			},
+			{
+				name: "description",
+				content:
+					"Lacak ibadah sholat harian Anda dengan mudah dan konsisten melalui Sholatify.",
 			},
 		],
 		links: [
