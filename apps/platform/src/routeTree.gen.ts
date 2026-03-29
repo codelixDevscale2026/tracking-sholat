@@ -10,21 +10,16 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as StatsRouteImport } from './routes/stats'
-import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SettingsIndexRouteImport } from './routes/settings.index'
 import { Route as SettingsCalculationMethodRouteImport } from './routes/settings.calculation-method'
 
 const StatsRoute = StatsRouteImport.update({
   id: '/stats',
   path: '/stats',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RegisterRoute = RegisterRouteImport.update({
@@ -47,11 +42,16 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SettingsIndexRoute = SettingsIndexRouteImport.update({
+  id: '/settings/',
+  path: '/settings/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SettingsCalculationMethodRoute =
   SettingsCalculationMethodRouteImport.update({
-    id: '/calculation-method',
-    path: '/calculation-method',
-    getParentRoute: () => SettingsRoute,
+    id: '/settings/calculation-method',
+    path: '/settings/calculation-method',
+    getParentRoute: () => rootRouteImport,
   } as any)
 
 export interface FileRoutesByFullPath {
@@ -59,18 +59,18 @@ export interface FileRoutesByFullPath {
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/settings': typeof SettingsRouteWithChildren
   '/stats': typeof StatsRoute
   '/settings/calculation-method': typeof SettingsCalculationMethodRoute
+  '/settings/': typeof SettingsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/settings': typeof SettingsRouteWithChildren
   '/stats': typeof StatsRoute
   '/settings/calculation-method': typeof SettingsCalculationMethodRoute
+  '/settings': typeof SettingsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -78,9 +78,9 @@ export interface FileRoutesById {
   '/history': typeof HistoryRoute
   '/login': typeof LoginRoute
   '/register': typeof RegisterRoute
-  '/settings': typeof SettingsRouteWithChildren
   '/stats': typeof StatsRoute
   '/settings/calculation-method': typeof SettingsCalculationMethodRoute
+  '/settings/': typeof SettingsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -89,27 +89,27 @@ export interface FileRouteTypes {
     | '/history'
     | '/login'
     | '/register'
-    | '/settings'
     | '/stats'
     | '/settings/calculation-method'
+    | '/settings/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/history'
     | '/login'
     | '/register'
-    | '/settings'
     | '/stats'
     | '/settings/calculation-method'
+    | '/settings'
   id:
     | '__root__'
     | '/'
     | '/history'
     | '/login'
     | '/register'
-    | '/settings'
     | '/stats'
     | '/settings/calculation-method'
+    | '/settings/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -117,8 +117,9 @@ export interface RootRouteChildren {
   HistoryRoute: typeof HistoryRoute
   LoginRoute: typeof LoginRoute
   RegisterRoute: typeof RegisterRoute
-  SettingsRoute: typeof SettingsRouteWithChildren
   StatsRoute: typeof StatsRoute
+  SettingsCalculationMethodRoute: typeof SettingsCalculationMethodRoute
+  SettingsIndexRoute: typeof SettingsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -128,13 +129,6 @@ declare module '@tanstack/react-router' {
       path: '/stats'
       fullPath: '/stats'
       preLoaderRoute: typeof StatsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/register': {
@@ -165,35 +159,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/settings/': {
+      id: '/settings/'
+      path: '/settings'
+      fullPath: '/settings/'
+      preLoaderRoute: typeof SettingsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/settings/calculation-method': {
       id: '/settings/calculation-method'
-      path: '/calculation-method'
+      path: '/settings/calculation-method'
       fullPath: '/settings/calculation-method'
       preLoaderRoute: typeof SettingsCalculationMethodRouteImport
-      parentRoute: typeof SettingsRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
-
-interface SettingsRouteChildren {
-  SettingsCalculationMethodRoute: typeof SettingsCalculationMethodRoute
-}
-
-const SettingsRouteChildren: SettingsRouteChildren = {
-  SettingsCalculationMethodRoute: SettingsCalculationMethodRoute,
-}
-
-const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
-  SettingsRouteChildren,
-)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   HistoryRoute: HistoryRoute,
   LoginRoute: LoginRoute,
   RegisterRoute: RegisterRoute,
-  SettingsRoute: SettingsRouteWithChildren,
   StatsRoute: StatsRoute,
+  SettingsCalculationMethodRoute: SettingsCalculationMethodRoute,
+  SettingsIndexRoute: SettingsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
